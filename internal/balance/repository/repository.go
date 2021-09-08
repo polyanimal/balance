@@ -15,14 +15,24 @@ type PgxPoolIface interface {
 	Ping(context.Context) error
 }
 
-type BalanceRepo struct {
+type BalanceRepository struct {
 	db PgxPoolIface
 }
 
-func NewBalanceRepository(database PgxPoolIface) *BalanceRepo {
-	return &BalanceRepo{
+func NewBalanceRepository(database PgxPoolIface) *BalanceRepository {
+	return &BalanceRepository{
 		db: database,
 	}
 }
 
+func (r *BalanceRepository) GetBalance(id string) (int, error) {
+	return 0, nil
+}
 
+func (r *BalanceRepository) AlterFunds(id string, funds int, currency string) error {
+	return nil
+}
+
+func (r *BalanceRepository) TransferFunds(idFrom, idTo string, funds int, currency string) error {
+	return nil
+}

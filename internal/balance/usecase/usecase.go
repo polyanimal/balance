@@ -12,6 +12,15 @@ func NewBalanceUC(repo balance.Repository) *BalanceUseCase {
 	}
 }
 
-func (uc * BalanceUseCase) AlterFunds(id string, funds int, currency string) {
-
+func (uc * BalanceUseCase) GetBalance(id string) (int, error) {
+	return uc.repo.GetBalance(id)
 }
+
+func (uc * BalanceUseCase) AlterFunds(id string, funds int, currency string) error {
+	return uc.repo.AlterFunds(id, funds, currency)
+}
+
+func (uc * BalanceUseCase) TransferFunds(idFrom, idTo string, funds int, currency string) error {
+	return uc.repo.TransferFunds(idFrom, idTo, funds, currency)
+}
+

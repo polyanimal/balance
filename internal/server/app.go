@@ -2,6 +2,7 @@ package server
 
 import (
 	"Balance/internal/balance"
+	"Balance/internal/balance/delivery"
 	"Balance/internal/balance/repository"
 	"Balance/internal/balance/usecase"
 	"context"
@@ -27,7 +28,7 @@ func init() {
 	}
 }
 
-func NewServer(port string) *App {
+func NewServer() *App {
 	connStr, connected := os.LookupEnv("DB_CONNECT")
 	if !connected {
 		fmt.Println(os.Getwd())
@@ -50,6 +51,8 @@ func NewServer(port string) *App {
 func (app *App) Run(port string) error {
 	router := gin.Default()
 	router.Use(gin.Recovery())
+	delivery.RegisterHTTPEndpoints(router, app.balanceUC)
+
 
 	app.server = &http.Server{
 		Addr:           ":" + port,
