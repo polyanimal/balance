@@ -1,10 +1,10 @@
 package server
 
 import (
-	"Balance/internal/balance"
-	"Balance/internal/balance/delivery"
-	"Balance/internal/balance/repository"
-	"Balance/internal/balance/usecase"
+	"github.com/polyanimal/balance/internal/balance"
+	"github.com/polyanimal/balance/internal/balance/delivery"
+	"github.com/polyanimal/balance/internal/balance/repository"
+	"github.com/polyanimal/balance/internal/balance/usecase"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"

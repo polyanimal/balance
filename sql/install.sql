@@ -30,7 +30,6 @@ create table mdb.transactions
     comment varchar(500),
     creation_date timestamp NOT NULL DEFAULT NOW(),
     funds  integer not null
-        constraint funds_nonnegative check (funds >= 0)
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON mdb.transactions TO mdb;

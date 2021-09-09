@@ -1,4 +1,4 @@
-module Balance
+module github.com/polyanimal/balance
 
 go 1.15
 

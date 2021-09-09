@@ -1,8 +1,8 @@
 package main
 
 import (
-	"Balance/internal/server"
 	"github.com/joho/godotenv"
+	"github.com/polyanimal/balance/internal/server"
 	"log"
 	"os"
 )

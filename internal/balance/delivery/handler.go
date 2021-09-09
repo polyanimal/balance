@@ -1,31 +1,13 @@
 package delivery
 
 import (
-	"Balance/internal/balance"
-	"Balance/util"
 	"github.com/gin-gonic/gin"
+	"github.com/polyanimal/balance/internal/balance"
+	"github.com/polyanimal/balance/internal/models"
+	"github.com/polyanimal/balance/util"
 	"net/http"
 	"strconv"
 )
-
-type AlterFundsRequest struct {
-	Id    string `json:"id"`
-	Funds string `json:"funds"`
-}
-
-type TransferRequest struct {
-	IdFrom string `json:"id_from"`
-	IdTo   string `json:"id_to"`
-	Funds  string `json:"funds"`
-}
-
-type TransactionRequest struct {
-	UserId  string `json:"user_id"`
-	Sort    string `json:"sort"`
-	Order   string `json:"order"`
-	Page    int    `json:"page"`
-	PerPage int    `json:"per_page"`
-}
 
 type Handler struct {
 	useCase balance.UseCase
@@ -36,7 +18,7 @@ func NewHandler(balanceUC balance.UseCase) *Handler {
 }
 
 func (h *Handler) AlterFunds(ctx *gin.Context) {
-	req := new(AlterFundsRequest)
+	req := new(models.AlterFundsRequest)
 
 	if err := ctx.BindJSON(req); err != nil {
 		util.RespondWithError(ctx, http.StatusBadRequest, err.Error())
@@ -45,8 +27,7 @@ func (h *Handler) AlterFunds(ctx *gin.Context) {
 
 	funds, err := strconv.Atoi(req.Funds)
 	if err != nil {
-		msg := "Failed to cast funds to integer"
-		util.RespondWithError(ctx, http.StatusBadRequest, msg)
+		util.RespondWithError(ctx, http.StatusBadRequest, "Failed to cast funds to integer")
 		return
 	}
 
@@ -72,7 +53,7 @@ func (h *Handler) GetBalance(ctx *gin.Context) {
 }
 
 func (h *Handler) TransferFunds(ctx *gin.Context) {
-	req := new(TransferRequest)
+	req := new(models.TransferRequest)
 
 	if err := ctx.BindJSON(req); err != nil {
 		util.RespondWithError(ctx, http.StatusBadRequest, err.Error())
@@ -92,11 +73,22 @@ func (h *Handler) TransferFunds(ctx *gin.Context) {
 }
 
 func (h *Handler) GetTransactions(ctx *gin.Context) {
-	req := new(TransactionRequest)
+	req := new(models.TransactionsRequest)
 	if err := ctx.BindJSON(req); err != nil {
 		util.RespondWithError(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	if req.Page <= 0 {
+		util.RespondWithError(ctx, http.StatusBadRequest, "invalid page")
+		return
+	}
 
+	transactions, err := h.useCase.GetTransactions(*req)
+	if err != nil {
+		util.RespondWithError(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, transactions)
 }

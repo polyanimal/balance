@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/jackc/pgconn"
 	pgx "github.com/jackc/pgx/v4"
+	"github.com/polyanimal/balance/internal/models"
 	"time"
 )
 
@@ -197,4 +198,44 @@ func (r *BalanceRepository) RecordTransaction(operation, idFrom, idTo string, fu
 	}
 
 	return nil
+}
+
+//sqlStatement := "SELECT id, user_id_from, user_id_to, comment, creation_date, funds" +
+//"FROM mdb.transactions" +
+//"WHERE user_id_from=$1" +
+//"ORDER BY $2" +
+//"LIMIT $3 OFFSET $4"
+
+func (r *BalanceRepository) GetTransactions(userId, order, sort string, page, perPage int) ([]models.Transaction, error) {
+	var sqlStatement string
+
+	sqlStatement = `
+        SELECT id, user_id_from, user_id_to, comment, creation_date, funds
+        FROM mdb.transactions
+        WHERE user_id_from=$1
+        ORDER BY 
+			CASE WHEN $2 = 'funds' AND $3 = 'ASC'  THEN funds END ASC,
+			CASE WHEN $2 = 'funds' AND $3 = 'DESC' THEN funds END DESC,
+			CASE WHEN $2 = 'creation_date' AND $3 = 'ASC'  THEN creation_date END ASC,
+			CASE WHEN $2 = 'creation_date' AND $3 = 'DESC' THEN creation_date END DESC
+		LIMIT $4 OFFSET $5 
+	`
+
+	rows, err := r.db.Query(context.Background(), sqlStatement, userId, sort, order, perPage, (page-1)*perPage)
+	if err != nil {
+		return nil, err
+	}
+
+	transactions := make([]models.Transaction, 0)
+
+	for rows.Next() {
+		t := models.Transaction{}
+		if err := rows.Scan(&t.Id, &t.IdFrom, &t.IdTo, &t.Comment, &t.DateCreate, &t.Funds); err != nil {
+			return nil, err
+		}
+
+		transactions = append(transactions, t)
+	}
+
+	return transactions, nil
 }

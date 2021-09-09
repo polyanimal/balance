@@ -1,8 +1,9 @@
 package usecase
 
 import (
-	"Balance/internal/balance"
 	"errors"
+	"github.com/polyanimal/balance/internal/balance"
+	"github.com/polyanimal/balance/internal/models"
 	"time"
 )
 
@@ -52,4 +53,7 @@ func (uc * BalanceUseCase) TransferFunds(idFrom, idTo string, funds int) error {
 	return uc.repo.TransferFunds(idFrom, idTo, funds)
 }
 
+func (uc * BalanceUseCase) GetTransactions(request models.TransactionsRequest) ([]models.Transaction, error) {
+	return uc.repo.GetTransactions(request.UserId, request.Order, request.Sort, request.Page, request.PerPage)
+}
 
