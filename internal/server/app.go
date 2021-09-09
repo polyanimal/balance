@@ -53,7 +53,6 @@ func (app *App) Run(port string) error {
 	router.Use(gin.Recovery())
 	delivery.RegisterHTTPEndpoints(router, app.balanceUC)
 
-
 	app.server = &http.Server{
 		Addr:           ":" + port,
 		Handler:        router,
