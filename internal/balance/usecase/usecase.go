@@ -23,8 +23,12 @@ func (uc * BalanceUseCase) GetBalance(id string, currency string) (int, error) {
 
 func (uc * BalanceUseCase) AlterFunds(id string, funds int) error {
 	t := time.Now()
-	var operation string
 
+	if err := uc.repo.AlterFunds(id, funds); err != nil {
+		return err
+	}
+
+	var operation string
 	if funds >= 0 {
 		operation = "funds added"
 	} else {
@@ -35,7 +39,7 @@ func (uc * BalanceUseCase) AlterFunds(id string, funds int) error {
 		return errors.New("error while recording a transaction")
 	}
 
-	return uc.repo.AlterFunds(id, funds)
+	return nil
 }
 
 func (uc * BalanceUseCase) TransferFunds(idFrom, idTo string, funds int) error {
@@ -46,11 +50,15 @@ func (uc * BalanceUseCase) TransferFunds(idFrom, idTo string, funds int) error {
 		return errors.New("invalid operation")
 	}
 
+	if err:=  uc.repo.TransferFunds(idFrom, idTo, funds); err != nil {
+		return err
+	}
+
 	if err := uc.repo.RecordTransaction("funds transfer", idFrom, idTo, funds, t); err != nil {
 		return errors.New("error while recording a transaction")
 	}
 
-	return uc.repo.TransferFunds(idFrom, idTo, funds)
+	return nil
 }
 
 func (uc * BalanceUseCase) GetTransactions(request models.TransactionsRequest) ([]models.Transaction, error) {

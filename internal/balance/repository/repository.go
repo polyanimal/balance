@@ -148,7 +148,9 @@ func (r *BalanceRepository) TransferFunds(idFrom, idTo string, funds int) error 
 	}
 
 	if count == 0 {
-		return errors.New("user doesn't exist")
+		if err = r.createUser(idTo, 0); err != nil {
+			return err
+		}
 	}
 
 	var balanceFrom, balanceTo int
@@ -200,19 +202,13 @@ func (r *BalanceRepository) RecordTransaction(operation, idFrom, idTo string, fu
 	return nil
 }
 
-//sqlStatement := "SELECT id, user_id_from, user_id_to, comment, creation_date, funds" +
-//"FROM mdb.transactions" +
-//"WHERE user_id_from=$1" +
-//"ORDER BY $2" +
-//"LIMIT $3 OFFSET $4"
-
 func (r *BalanceRepository) GetTransactions(userId, order, sort string, page, perPage int) ([]models.Transaction, error) {
 	var sqlStatement string
 
 	sqlStatement = `
         SELECT id, user_id_from, user_id_to, comment, creation_date, funds
         FROM mdb.transactions
-        WHERE user_id_from=$1
+        WHERE user_id_from=$1 OR user_id_to=$1 
         ORDER BY 
 			CASE WHEN $2 = 'funds' AND $3 = 'ASC'  THEN funds END ASC,
 			CASE WHEN $2 = 'funds' AND $3 = 'DESC' THEN funds END DESC,
