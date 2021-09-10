@@ -36,18 +36,3 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON mdb.transactions TO mdb;
 COMMENT ON TABLE mdb.transactions IS 'Транзакции';
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA mdb TO mdb;
--- create table mdb.funds
--- (
---     id varchar(100) REFERENCES mdb.users(id) ON DELETE CASCADE,
-
--- );
---
--- GRANT SELECT, INSERT, UPDATE, DELETE ON mdb.funds TO mdb;
--- COMMENT ON TABLE mdb.funds IS 'Баланс';
---
--- INSERT INTO mdb.users (id, name)
--- VALUES ('admin', 'some name'),
--- VALUES ('test1', 'noname1'),
--- VALUES ('test2', 'noname2'),
--- VALUES ('test3', 'noname3'),
--- VALUES ('test4', 'noname4');
