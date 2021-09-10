@@ -49,7 +49,20 @@ func (h *Handler) GetBalance(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, userBalance)
+	w := userBalance / 100
+	c := userBalance - w * 100
+	v := strconv.Itoa(w) + "." + strconv.Itoa(c)
+
+	if currency == "" {
+		currency = "RUB"
+	}
+
+	resp := models.BalanceResponse{
+		Value:    v,
+		Currency: currency,
+	}
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 func (h *Handler) TransferFunds(ctx *gin.Context) {
